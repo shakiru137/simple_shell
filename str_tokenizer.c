@@ -11,17 +11,20 @@ char **strtow(char *str, char *d)
 {
 	int i, j, k, m, numwords = 0;
 	char **s;
-
+	// check whehter the input string is NULL or empty
 	if (str == NULL || str[0] == 0)
 		return (NULL);
 	if (!d)
 		d = " ";
+	// This counts the number of wors in the inputed string
 	for (i = 0; str[i] != '\0'; i++)
 		if (!is_delim(str[i], d) && (is_delim(str[i + 1], d) || !str[i + 1]))
 			numwords++;
-
+	
+	// If the number of words are equal to zero, return NULL
 	if (numwords == 0)
 		return (NULL);
+	// Allocates memory for array of strings
 	s = malloc((1 + numwords) * sizeof(char *));
 	if (!s)
 		return (NULL);
@@ -29,6 +32,7 @@ char **strtow(char *str, char *d)
 	{
 		while (is_delim(str[i], d))
 			i++;
+		// Counts the characters in current word
 		k = 0;
 		while (!is_delim(str[i + k], d) && str[i + k])
 			k++;
@@ -44,6 +48,7 @@ char **strtow(char *str, char *d)
 			s[j][m] = str[i++];
 		s[j][m] = 0;
 	}
+	// Sets the last element of the array to NULL
 	s[j] = NULL;
 	return (s);
 }
@@ -59,14 +64,18 @@ char **strtow2(char *str, char d)
 	int i, j, k, m, numwords = 0;
 	char **s;
 
+	// checks if the input string is NULL or empty
 	if (str == NULL || str[0] == 0)
 		return (NULL);
+	//counts the number of word in the input string
 	for (i = 0; str[i] != '\0'; i++)
 		if ((str[i] != d && str[i + 1] == d) ||
 		    (str[i] != d && !str[i + 1]) || str[i + 1] == d)
 			numwords++;
+	// Returns NULL if there are no words
 	if (numwords == 0)
 		return (NULL);
+	// Allocates memory for the array of strings
 	s = malloc((1 + numwords) * sizeof(char *));
 	if (!s)
 		return (NULL);
@@ -74,9 +83,11 @@ char **strtow2(char *str, char d)
 	{
 		while (str[i] == d && str[i] != d)
 			i++;
+		// counts the characters in the current word
 		k = 0;
 		while (str[i + k] != d && str[i + k] && str[i + k] != d)
 			k++;
+		//allocates memory for current word
 		s[j] = malloc((k + 1) * sizeof(char));
 		if (!s[j])
 		{
