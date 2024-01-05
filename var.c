@@ -12,18 +12,21 @@ int is_chain(info_t *info, char *buf, size_t *p)
 {
 	size_t j = *p;
 
+	/* checks for the '||' operator */
 	if (buf[j] == '|' && buf[j + 1] == '|')
 	{
 		buf[j] = 0;
 		j++;
 		info->cmd_buf_type = CMD_OR;
 	}
+	/* checks for the '&&' operator */
 	else if (buf[j] == '&' && buf[j + 1] == '&')
 	{
-		buf[j] = 0;
+		buf[j] = 0; /* replace the first '&' with null to terminate the previous command */
 		j++;
 		info->cmd_buf_type = CMD_AND;
 	}
+	/* Check for the ';' operator */
 	else if (buf[j] == ';') /* found end of this command */
 	{
 		buf[j] = 0; /* replace semicolon with null */
@@ -49,16 +52,20 @@ void check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
 {
 	size_t j = *p;
 
+	/* check if command buffer is CMD_AND */
 	if (info->cmd_buf_type == CMD_AND)
 	{
+		/* terminate current command by replacing 'i' with null character if command exit status is true */
 		if (info->status)
 		{
 			buf[i] = 0;
 			j = len;
 		}
 	}
+	/* check if the command buffer is CMD_OR */
 	if (info->cmd_buf_type == CMD_OR)
 	{
+		/* terminate current command by replacing 'i' with null if exit status is zero */
 		if (!info->status)
 		{
 			buf[i] = 0;
@@ -66,7 +73,7 @@ void check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
 		}
 	}
 
-	*p = j;
+	*p = j; /* update position 'p' to position 'j' */
 }
 
 /**
@@ -83,10 +90,15 @@ int replace_alias(info_t *info)
 
 	for (i = 0; i < 10; i++)
 	{
+		/* check for an alias in the alias list that matches curent command */
 		node = node_starts_with(info->alias, info->argv[0], '=');
 		if (!node)
-			return (0);
+			return (0); /* If no matching alias is found, return 0 */
+
+		/*  Free the original command name stored in argv[0] */
 		free(info->argv[0]);
+
+		/* Find the position of '=' in the alias definition */
 		p = _strchr(node->str, '=');
 		if (!p)
 			return (0);
@@ -111,9 +123,11 @@ int replace_vars(info_t *info)
 
 	for (i = 0; info->argv[i]; i++)
 	{
+		/* Check if the argument starts with '$' and has more than one character */
 		if (info->argv[i][0] != '$' || !info->argv[i][1])
-			continue;
+			continue; /* Skip to the next iteration if the condition is not met */
 
+		/* Check if the argument is "$?" */
 		if (!_strcmp(info->argv[i], "$?"))
 		{
 			replace_string(&(info->argv[i]),
@@ -122,10 +136,12 @@ int replace_vars(info_t *info)
 		}
 		if (!_strcmp(info->argv[i], "$$"))
 		{
+			/* Replace the argument with the converted process ID */
 			replace_string(&(info->argv[i]),
 				_strdup(convert_number(getpid(), 10, 0)));
 			continue;
 		}
+		/* Check if the argument corresponds to an environment variable */
 		node = node_starts_with(info->env, &info->argv[i][1], '=');
 		if (node)
 		{
@@ -133,6 +149,7 @@ int replace_vars(info_t *info)
 				_strdup(_strchr(node->str, '=') + 1));
 			continue;
 		}
+		/* If no match is found, replace the argument with an empty string */
 		replace_string(&info->argv[i], _strdup(""));
 
 	}
