@@ -9,17 +9,21 @@
  */
 int is_cmd(info_t *info, char *path)
 {
+	/* Declare a struct to hold file status information */
 	struct stat st;
 
+	/* Ignore the 'info' parameter */
 	(void)info;
+	/* Check if 'path' is NULL */
 	if (!path || stat(path, &st))
 		return (0);
 
+	/* Check if the file is a regular file */
 	if (st.st_mode & S_IFREG)
 	{
-		return (1);
+		return (1); /* return 1 if the file is a regular file */
 	}
-	return (0);
+	return (0); /* return 0 if the file is not a regular file */
 }
 
 /**
@@ -38,7 +42,7 @@ char *dup_chars(char *pathstr, int start, int stop)
 	for (k = 0, i = start; i < stop; i++)
 		if (pathstr[i] != ':')
 			buf[k++] = pathstr[i];
-	buf[k] = 0;
+	buf[k] = 0; /* Null-terminate the buffer to create a valid C string */
 	return (buf);
 }
 
@@ -55,8 +59,9 @@ char *find_path(info_t *info, char *pathstr, char *cmd)
 	int i = 0, curr_pos = 0;
 	char *path;
 
-	if (!pathstr)
+	if (!pathstr) /* Check if 'pathstr' is NULL */
 		return (NULL);
+	/* Check if the 'cmd' is a relative path starting with "./" and is a valid command */
 	if ((_strlen(cmd) > 2) && starts_with(cmd, "./"))
 	{
 		if (is_cmd(info, cmd))
@@ -64,9 +69,11 @@ char *find_path(info_t *info, char *pathstr, char *cmd)
 	}
 	while (1)
 	{
+		/* Check for the end of the string or a colon delimiter in 'pathstr' */
 		if (!pathstr[i] || pathstr[i] == ':')
 		{
 			path = dup_chars(pathstr, curr_pos, i);
+			/* If the path segment is empty, concatenate 'cmd' to it; otherwise, add a '/' and then 'cmd */
 			if (!*path)
 				_strcat(path, cmd);
 			else
@@ -82,5 +89,6 @@ char *find_path(info_t *info, char *pathstr, char *cmd)
 		}
 		i++;
 	}
+	/* Return NULL if no valid path is foun */
 	return (NULL);
 }
