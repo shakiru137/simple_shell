@@ -14,28 +14,40 @@ int hsh(info_t *info, char **av)
 
 	while (r != -1 && builtin_ret != -2)
 	{
+		/* clear information structure for a new command */
 		clear_info(info);
+		/* Display shell prompt if in interactive mode */
 		if (interactive(info))
 			_puts("$ ");
 		_eputchar(BUF_FLUSH);
+		/*  Get user input and store the result in r */
 		r = get_input(info);
+		/* Process the input if no error occurred */
 		if (r != -1)
 		{
 			set_info(info, av);
+			/* Find and execute built-in command */
 			builtin_ret = find_builtin(info);
+			/* If not a built-in command, search for and execute external command */
 			if (builtin_ret == -1)
 				find_cmd(info);
 		}
 		else if (interactive(info))
 			_putchar('\n');
+		/* Free allocated memory for the current command */
 		free_info(info, 0);
 	}
+	/* Write command history to file */
 	write_history(info);
+	/* Free remaining allocated memory */
 	free_info(info, 1);
+	/* Exit the shell with the appropriate status or error code */
 	if (!interactive(info) && info->status)
 		exit(info->status);
+	/* Handle special exit conditions for certain built-in commands */
 	if (builtin_ret == -2)
 	{
+		/* Exit with the specified error number if applicable */
 		if (info->err_num == -1)
 			exit(info->status);
 		exit(info->err_num);
@@ -68,10 +80,13 @@ int find_builtin(info_t *info)
 	};
 
 	for (i = 0; builtintbl[i].type; i++)
+		/* Compare the provided command with the current built-in command */
 		if (_strcmp(info->argv[0], builtintbl[i].type) == 0)
 		{
 			info->line_count++;
+			/* Execute the corresponding built-in function and store the return value */
 			built_in_ret = builtintbl[i].func(info);
+			/* Exit the loop */
 			break;
 		}
 	return (built_in_ret);
@@ -88,18 +103,22 @@ void find_cmd(info_t *info)
 	char *path = NULL;
 	int i, k;
 
+	/* Set the initial path to the command name */
 	info->path = info->argv[0];
 	if (info->linecount_flag == 1)
 	{
 		info->line_count++;
 		info->linecount_flag = 0;
 	}
+	/* Count non-delimiter arguments */
 	for (i = 0, k = 0; info->arg[i]; i++)
 		if (!is_delim(info->arg[i], " \t\n"))
 			k++;
+	/* If no non-delimiter arguments are present, return without further processing */
 	if (!k)
 		return;
 
+	/* If no non-delimiter arguments are present, return without further processing */
 	path = find_path(info, _getenv(info, "PATH="), info->argv[0]);
 	if (path)
 	{
@@ -111,6 +130,7 @@ void find_cmd(info_t *info)
 		if ((interactive(info) || _getenv(info, "PATH=")
 			|| info->argv[0][0] == '/') && is_cmd(info, info->argv[0]))
 			fork_cmd(info);
+		/* If the command is not found and not an empty line, set the status and print an error message */
 		else if (*(info->arg) != '\n')
 		{
 			info->status = 127;
@@ -127,12 +147,12 @@ void find_cmd(info_t *info)
  */
 void fork_cmd(info_t *info)
 {
-	pid_t child_pid;
+	pid_t child_pid; /* Fork a new process */
 
-	child_pid = fork();
+	child_pid = fork(); /* Check for fork failure */
 	if (child_pid == -1)
 	{
-		/* TODO: PUT ERROR FUNCTION */
+		/* print an error message and return in case of fork failure */
 		perror("Error:");
 		return;
 	}
@@ -145,7 +165,6 @@ void fork_cmd(info_t *info)
 				exit(126);
 			exit(1);
 		}
-		/* TODO: PUT ERROR FUNCTION */
 	}
 	else
 	{
