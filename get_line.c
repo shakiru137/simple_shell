@@ -18,6 +18,7 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 		/*bfree((void **)info->cmd_buf);*/
 		free(*buf);
 		*buf = NULL;
+		/* Set up signal handling for SIGINT */
 		signal(SIGINT, sigintHandler);
 #if USE_GETLINE
 		r = getline(buf, &len_p, stdin);
@@ -26,11 +27,13 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 #endif
 		if (r > 0)
 		{
+			/* remove trailing newline character if present */
 			if ((*buf)[r - 1] == '\n')
 			{
 				(*buf)[r - 1] = '\0'; /* remove trailing newline */
 				r--;
 			}
+			/* set flag indicating line count is required */
 			info->linecount_flag = 1;
 			remove_comments(*buf);
 			build_history_list(info, *buf, info->histcount++);
@@ -41,7 +44,7 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 			}
 		}
 	}
-	return (r);
+	return (r); /* return number of characters read */
 }
 
 /**
@@ -57,9 +60,9 @@ ssize_t get_input(info_t *info)
 	ssize_t r = 0;
 	char **buf_p = &(info->arg), *p;
 
-	_putchar(BUF_FLUSH);
+	_putchar(BUF_FLUSH); /* flush to buffer to stdout */
 	r = input_buf(info, &buf, &len);
-	if (r == -1) /* EOF */
+	if (r == -1) /*  check for EOF */
 		return (-1);
 	if (len)	/* we have commands left in the chain buffer */
 	{
@@ -67,14 +70,14 @@ ssize_t get_input(info_t *info)
 		p = buf + i; /* get pointer for return */
 
 		check_chain(info, buf, &j, i, len);
-		while (j < len) /* iterate to semicolon or end */
+		while (j < len) /* iterate to semicolon or end of chain*/
 		{
 			if (is_chain(info, buf, &j))
 				break;
 			j++;
 		}
 
-		i = j + 1; /* increment past nulled ';'' */
+		i = j + 1; /* increment past nulled ';' */
 		if (i >= len) /* reached end of buffer? */
 		{
 			i = len = 0; /* reset position and length */
@@ -99,10 +102,12 @@ ssize_t get_input(info_t *info)
  */
 ssize_t read_buf(info_t *info, char *buf, size_t *i)
 {
-	ssize_t r = 0;
+	ssize_t r = 0; /* variable to store result */
 
+	/* buffer indicating exusting data */
 	if (*i)
 		return (0);
+	/* Read from the specified file descriptor into the buffer */
 	r = read(info->readfd, buf, READ_BUF_SIZE);
 	if (r >= 0)
 		*i = r;
@@ -119,19 +124,19 @@ ssize_t read_buf(info_t *info, char *buf, size_t *i)
  */
 int _getline(info_t *info, char **ptr, size_t *length)
 {
-	static char buf[READ_BUF_SIZE];
+	static char buf[READ_BUF_SIZE]; /* Static variables for buffer */
 	static size_t i, len;
 	size_t k;
 	ssize_t r = 0, s = 0;
 	char *p = NULL, *new_p = NULL, *c;
 
-	p = *ptr;
+	p = *ptr; /* init pointer 'p' with buffer pointer */
 	if (p && length)
 		s = *length;
-	if (i == len)
+	if (i == len) /* reset buffer index and length */
 		i = len = 0;
 
-	r = read_buf(info, buf, &len);
+	r = read_buf(info, buf, &len); /* read data into the buffer */
 	if (r == -1 || (r == 0 && len == 0))
 		return (-1);
 
@@ -153,7 +158,7 @@ int _getline(info_t *info, char **ptr, size_t *length)
 	if (length)
 		*length = s;
 	*ptr = p;
-	return (s);
+	return (s); /* return the total length of string */
 }
 
 /**
