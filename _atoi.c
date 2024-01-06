@@ -3,7 +3,7 @@
  * interactive - checks if the shell is in interactive mode
  * @info: struct containing shell information
  *
- * Returns: 1 if interactive mode, 0 otherwise
+ * Return: 1 if interactive mode, 0 otherwise
  */
 int interactive(info_t *info)
 {
@@ -28,7 +28,7 @@ int is_delim(char c, char *delim)
  * _isalpha - checks if a character is alphabetic
  * @c: the character to be checked
  *
- * Returns: 1 if the character is alphabetic, 0 otherwise
+ * Return: 1 if the character is alphabetic, 0 otherwise
  */
 int _isalpha(int c)
 {
@@ -41,10 +41,9 @@ int _isalpha(int c)
 /**
  *_atoi - converts a string to an integer
  *@s: the string to be converted
-
- *Return: 0 if no numbers in string, converted number otherwise
+ *
+ *Return: 0 if no numbers in string
  */
-
 int _atoi(char *s)
 {
 	int i, sign = 1, flag = 0, output;

@@ -1,5 +1,4 @@
 #include "shell.h"
-
 /**
  * hsh - main shell loop
  * @info: the parameter & return info struct
@@ -14,13 +13,11 @@ int hsh(info_t *info, char **av)
 
 	while (r != -1 && builtin_ret != -2)
 	{
-		/* clear information structure for a new command */
 		clear_info(info);
 		/* Display shell prompt if in interactive mode */
 		if (interactive(info))
 			_puts("$ ");
 		_eputchar(BUF_FLUSH);
-		/*  Get user input and store the result in r */
 		r = get_input(info);
 		/* Process the input if no error occurred */
 		if (r != -1)
@@ -34,12 +31,10 @@ int hsh(info_t *info, char **av)
 		}
 		else if (interactive(info))
 			_putchar('\n');
-		/* Free allocated memory for the current command */
 		free_info(info, 0);
 	}
 	/* Write command history to file */
 	write_history(info);
-	/* Free remaining allocated memory */
 	free_info(info, 1);
 	/* Exit the shell with the appropriate status or error code */
 	if (!interactive(info) && info->status)
@@ -114,11 +109,13 @@ void find_cmd(info_t *info)
 	for (i = 0, k = 0; info->arg[i]; i++)
 		if (!is_delim(info->arg[i], " \t\n"))
 			k++;
-	/* If no non-delimiter arguments are present, return without further processing */
+	/* If no non-delimiter arguments are present, return */
+	/* without further processing */
 	if (!k)
 		return;
 
-	/* If no non-delimiter arguments are present, return without further processing */
+	/* If no non-delimiter arguments are present, return */
+	/* without further processing */
 	path = find_path(info, _getenv(info, "PATH="), info->argv[0]);
 	if (path)
 	{
@@ -130,7 +127,8 @@ void find_cmd(info_t *info)
 		if ((interactive(info) || _getenv(info, "PATH=")
 			|| info->argv[0][0] == '/') && is_cmd(info, info->argv[0]))
 			fork_cmd(info);
-		/* If the command is not found and not an empty line, set the status and print an error message */
+		/* If the command is not found and not an empty */
+		/* line, set the status and print an error message */
 		else if (*(info->arg) != '\n')
 		{
 			info->status = 127;
