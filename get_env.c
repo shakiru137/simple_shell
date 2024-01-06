@@ -8,8 +8,10 @@
  */
 char **get_environ(info_t *info)
 {
+	/* Check if 'environ' is not initialized */
 	if (!info->environ || info->env_changed)
 	{
+		/* Convert the linked list to strings */
 		info->environ = list_to_strings(info->env);
 		info->env_changed = 0;
 	}
@@ -26,23 +28,27 @@ char **get_environ(info_t *info)
  */
 int _unsetenv(info_t *info, char *var)
 {
+	/* Init variables */
 	list_t *node = info->env;
 	size_t i = 0;
 	char *p;
 
+	/* linked list or variable is not provided */
 	if (!node || !var)
 		return (0);
 
 	while (node)
 	{
+		/* Check if the current variable starts with the specified 'var' */
 		p = starts_with(node->str, var);
 		if (p && *p == '=')
 		{
 			info->env_changed = delete_node_at_index(&(info->env), i);
-			i = 0;
+			i = 0; /* Reset the index and node for next iteration */
 			node = info->env;
 			continue;
 		}
+		/* Move to the next node and update the index */
 		node = node->next;
 		i++;
 	}
@@ -64,9 +70,10 @@ int _setenv(info_t *info, char *var, char *value)
 	list_t *node;
 	char *p;
 
-	if (!var || !value)
+	if (!var || !value) /* variable or value is not provided */
 		return (0);
 
+	/* allocate memory for concatenated string */
 	buf = malloc(_strlen(var) + _strlen(value) + 2);
 	if (!buf)
 		return (1);
@@ -76,18 +83,20 @@ int _setenv(info_t *info, char *var, char *value)
 	node = info->env;
 	while (node)
 	{
+		/* Check if the current variable starts with the specified 'var' */
 		p = starts_with(node->str, var);
 		if (p && *p == '=')
 		{
+			/* free the existing string */
 			free(node->str);
-			node->str = buf;
+			node->str = buf; /* update node string */
 			info->env_changed = 1;
 			return (0);
 		}
-		node = node->next;
+		node = node->next; /* move to the next mode */
 	}
 	add_node_end(&(info->env), buf, 0);
-	free(buf);
+	free(buf); /* free buffer */
 	info->env_changed = 1;
 	return (0);
 }
