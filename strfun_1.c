@@ -13,15 +13,17 @@ char *_strcpy(char *dest, char *src)
 {
 	int i = 0;
 
-	/* Check if the source and destination strings are the same or if the source is NUL */
+	/* Check if src and dest strings are the same or if the src is NUL */
 	if (dest == src || src == 0)
-		return (dest); /* If NULL, return the destination string without copying anything */
+		return (dest); /* If NULL, return the dest string */
+	/* without copying anything */
 	while (src[i])
 	{
 		dest[i] = src[i];
 		i++;
 	}
-	/* Add a null terminator to the destination string to ensure it is properly terminated */
+	/* Add a null terminator to the destination string to */
+	/* ensure it is properly terminated */
 	dest[i] = 0;
 	return (dest);
 }
@@ -33,7 +35,8 @@ char *_strcpy(char *dest, char *src)
  * Return: pointer to the duplicated string
  */
 
-/* function to duplicate a string and return a pointer to the duplicated string */
+/* function to duplicate a string and return a pointer to */
+/* the duplicated string */
 char *_strdup(const char *str)
 {
 	int length = 0;
@@ -88,7 +91,8 @@ int _putchar(char c)
 {
 	/* static variable to keep track of the current position in the buffer */
 	static int i;
-	/* static buffer to temporarily store characters before writing to the standard output */
+	/* static buffer to temporarily store characters before */
+	/* writing to the standard output */
 	static char buf[WRITE_BUF_SIZE];
 
 	/* if the character is a buffer flush signal or if the buffer is full */

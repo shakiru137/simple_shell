@@ -22,7 +22,8 @@ int is_chain(info_t *info, char *buf, size_t *p)
 	/* checks for the '&&' operator */
 	else if (buf[j] == '&' && buf[j + 1] == '&')
 	{
-		buf[j] = 0; /* replace the first '&' with null to terminate the previous command */
+		buf[j] = 0;
+	/* replace the first '&' with null to terminate the previous command */
 		j++;
 		info->cmd_buf_type = CMD_AND;
 	}
@@ -55,7 +56,8 @@ void check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
 	/* check if command buffer is CMD_AND */
 	if (info->cmd_buf_type == CMD_AND)
 	{
-		/* terminate current command by replacing 'i' with null character if command exit status is true */
+	/* terminate current command by replacing 'i' with */
+	/* null character if command exit status is true */
 		if (info->status)
 		{
 			buf[i] = 0;
@@ -65,7 +67,8 @@ void check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
 	/* check if the command buffer is CMD_OR */
 	if (info->cmd_buf_type == CMD_OR)
 	{
-		/* terminate current command by replacing 'i' with null if exit status is zero */
+	/* terminate current command by replacing 'i' with */
+	/* null if exit status is zero */
 		if (!info->status)
 		{
 			buf[i] = 0;
@@ -123,7 +126,7 @@ int replace_vars(info_t *info)
 
 	for (i = 0; info->argv[i]; i++)
 	{
-		/* Check if the argument starts with '$' and has more than one character */
+	/* Check if argument starts with '$' and has more than one char */
 		if (info->argv[i][0] != '$' || !info->argv[i][1])
 			continue; /* Skip to the next iteration if the condition is not met */
 

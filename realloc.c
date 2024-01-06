@@ -46,7 +46,7 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
 	char *p;
 
-	/* If the original pointer is NULL, allocate new memory with the specified size */
+	/* If the original ptr is NULL, alloc new mem with d specified size */
 	if (!ptr)
 		return (malloc(new_size));
 	/* If the new size is zero, free the original memory and return NULL */
