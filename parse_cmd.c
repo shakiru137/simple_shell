@@ -61,7 +61,7 @@ char *find_path(info_t *info, char *pathstr, char *cmd)
 
 	if (!pathstr) /* Check if 'pathstr' is NULL */
 		return (NULL);
-	/* Check if the 'cmd' is a relative path starting with "./" and is a valid command */
+	/* Check if 'cmd' is a relative path starting with "./" */
 	if ((_strlen(cmd) > 2) && starts_with(cmd, "./"))
 	{
 		if (is_cmd(info, cmd))
@@ -73,7 +73,7 @@ char *find_path(info_t *info, char *pathstr, char *cmd)
 		if (!pathstr[i] || pathstr[i] == ':')
 		{
 			path = dup_chars(pathstr, curr_pos, i);
-			/* If the path segment is empty, concatenate 'cmd' to it; otherwise, add a '/' and then 'cmd */
+			/* If the path is empty, add 'cmd' to it; else, add a '/' first */
 			if (!*path)
 				_strcat(path, cmd);
 			else
