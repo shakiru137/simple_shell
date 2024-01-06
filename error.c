@@ -10,7 +10,7 @@ void _eputs(char *str)
 {
 	int j = 0;
 
-	if (!str)
+	if (!str) /* input string is not provided */
 		return;
 	while (str[j] != '\0')
 	{
@@ -31,14 +31,15 @@ int _eputchar(char c)
 	static int i;
 	static char buf[WRITE_BUF_SIZE];
 
+	/* Check if the character is a buffer flush signal or if the buffer is full */
 	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
-		write(2, buf, i);
-		i = 0;
+		write(2, buf, i); /* Write the contents of the buffer to standard error */
+		i = 0; /* reset index */
 	}
 	if (c != BUF_FLUSH)
 		buf[i++] = c;
-	return (1);
+	return (1); /* return 1 for success */
 }
 
 /**
@@ -52,7 +53,7 @@ int _eputchar(char c)
 int _putfd(char c, int fd)
 {
 	static int i;
-	static char buf[WRITE_BUF_SIZE];
+	static char buf[WRITE_BUF_SIZE]; /* init static variable for buffer */
 
 	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
@@ -61,7 +62,7 @@ int _putfd(char c, int fd)
 	}
 	if (c != BUF_FLUSH)
 		buf[i++] = c;
-	return (1);
+	return (1); /* return 1 for success */
 }
 
 /**
@@ -75,11 +76,12 @@ int _putsfd(char *str, int fd)
 {
 	int j = 0;
 
+	/* check if input string is not provided */
 	if (!str)
 		return (0);
 	while (*str)
 	{
 		j += _putfd(*str++, fd);
 	}
-	return (j);
+	return (j); /* return total number of characters written */
 }
