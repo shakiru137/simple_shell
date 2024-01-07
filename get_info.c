@@ -25,22 +25,26 @@ void set_info(info_t *info, char **av)
 	if (info->arg)
 	{
 		info->argv = strtow(info->arg, " \t");
+		/* check if 'strtow' failed to split 'arg' */
 		if (!info->argv)
 		{
 
 			info->argv = malloc(sizeof(char *) * 2);
+			/* check if memory allocation was successful */
 			if (info->argv)
 			{
 				info->argv[0] = _strdup(info->arg);
+				/* Set the 2nd element of 'argv' to NULL */
 				info->argv[1] = NULL;
 			}
 		}
+		/* Count the number of elements in 'argv' and set 'argc' accordingly */
 		for (i = 0; info->argv && info->argv[i]; i++)
 			;
 		info->argc = i;
 
-		replace_alias(info);
-		replace_vars(info);
+		replace_alias(info); /* replace aliases in 'info' */
+		replace_vars(info); /* replace variables in 'info' */
 	}
 }
 
@@ -51,15 +55,19 @@ void set_info(info_t *info, char **av)
  */
 void free_info(info_t *info, int all)
 {
+	/* Free the memory allocated for the 'argv' array */
 	ffree(info->argv);
 	info->argv = NULL;
+	/* set the 'path' member of the 'info'structure to NULL */
 	info->path = NULL;
-	if (all)
+	if (all) /* check if 'all' flag is true */
 	{
+		/* check if 'cmd_buf' is not allocated */
 		if (!info->cmd_buf)
 			free(info->arg);
+		/* check if 'env' list is allocated */
 		if (info->env)
-			free_list(&(info->env));
+			free_list(&(info->env)); /* free 'env' list */
 		if (info->history)
 			free_list(&(info->history));
 		if (info->alias)
@@ -67,8 +75,9 @@ void free_info(info_t *info, int all)
 		ffree(info->environ);
 			info->environ = NULL;
 		bfree((void **)info->cmd_buf);
+		/* heck if 'readfd' is greater than 2 */
 		if (info->readfd > 2)
-			close(info->readfd);
-		_putchar(BUF_FLUSH);
+			close(info->readfd); /* close file descriptor */
+		_putchar(BUF_FLUSH); /* flush the output buffer */
 	}
 }
