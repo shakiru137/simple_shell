@@ -32,10 +32,11 @@ int is_delim(char c, char *delim)
  */
 int _isalpha(int c)
 {
+	/* Check if the character is lowercase or uppercase alphabets */
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-		return (1);
+		return (1); /* return 1 if character is an alphabet */
 	else
-		return (0);
+		return (0); /* return 0, otherwise */
 }
 
 /**
@@ -54,6 +55,7 @@ int _atoi(char *s)
 		if (s[i] == '-')
 			sign *= -1;
 
+		/*  Check if the character is a digit */
 		if (s[i] >= '0' && s[i] <= '9')
 		{
 			flag = 1;
@@ -64,10 +66,11 @@ int _atoi(char *s)
 			flag = 2;
 	}
 
+	/* Adjust the output based on the sign */
 	if (sign == -1)
 		output = -result;
 	else
 		output = result;
 
-	return (output);
+	return (output); /* return the converted integer */
 }
