@@ -12,10 +12,10 @@ size_t list_len(const list_t *h)
 
 	while (h)
 	{
-		h = h->next;
+		h = h->next; /* move to next node in the linked list */
 		i++;
 	}
-	return (i);
+	return (i); /* return final count */
 }
 
 /**
@@ -31,7 +31,7 @@ char **list_to_strings(list_t *head)
 	char **strs;
 	char *str;
 
-	if (!head || !i)
+	if (!head || !i) /* Check if the linked list is NULL */
 		return (NULL);
 	/* allocate memory for array of strings */
 	strs = malloc(sizeof(char *) * (i + 1));
