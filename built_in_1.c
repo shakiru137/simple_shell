@@ -28,12 +28,12 @@ int unset_alias(info_t *info, char *str)
 	p = _strchr(str, '=');
 	if (!p)
 		return (1);
-	c = *p;
+	c = *p; /* Save the character at the position of '=' */
 	*p = 0;
 	ret = delete_node_at_index(&(info->alias),
 		get_node_index(info->alias, node_starts_with(info->alias, str, -1)));
-	*p = c;
-	return (ret);
+	*p = c; /* restore the original character */
+	return (ret); /* Return the result of the delete operation */
 }
 
 /**
@@ -48,8 +48,8 @@ int set_alias(info_t *info, char *str)
 	char *p;
 
 	p = _strchr(str, '=');
-	if (!p)
-		return (1);
+	if (!p) /* '=' is not found in the string */
+		return (1); /* return 1 to indicate isuue */
 	if (!*++p)
 		return (unset_alias(info, str));
 
@@ -65,16 +65,16 @@ int set_alias(info_t *info, char *str)
  */
 int print_alias(list_t *node)
 {
-	char *p = NULL, *a = NULL;
+	char *p = NULL, *a = NULL; /* init pointers */
 
 	if (node)
 	{
-		p = _strchr(node->str, '=');
+		p = _strchr(node->str, '='); /* find position of '=' in string */
 		for (a = node->str; a <= p; a++)
 			_putchar(*a);
-		_putchar('\'');
-		_puts(p + 1);
-		_puts("'\n");
+		_putchar('\''); /* print single quote character */
+		_puts(p + 1); /* print string after '=' */
+		_puts("'\n"); /* print a newline */
 		return (0);
 	}
 	return (1);
@@ -92,8 +92,10 @@ int _myalias(info_t *info)
 	char *p = NULL;
 	list_t *node = NULL;
 
+	/* Check if the number of command-line arguments is 1 */
 	if (info->argc == 1)
 	{
+		/* print aliases stored in the'alias' of info_t structure */
 		node = info->alias;
 		while (node)
 		{
@@ -102,14 +104,16 @@ int _myalias(info_t *info)
 		}
 		return (0);
 	}
+	/* loop through command line arguments */
 	for (i = 1; info->argv[i]; i++)
 	{
-		p = _strchr(info->argv[i], '=');
+		p = _strchr(info->argv[i], '='); /* check if argument has '=' */
 		if (p)
-			set_alias(info, info->argv[i]);
+			set_alias(info, info->argv[i]); /* set alias if true */
 		else
+			/* print alias if false */
 			print_alias(node_starts_with(info->alias, info->argv[i], '='));
 	}
 
-	return (0);
+	return (0); /* return 0 for success */
 }
