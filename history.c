@@ -11,17 +11,20 @@ char *get_history_file(info_t *info)
 {
 	char *buf, *dir;
 
+	/* value of the "HOME" environment variable */
 	dir = _getenv(info, "HOME=");
+	/* return NULL if "HOME"variable is not set */
 	if (!dir)
 		return (NULL);
+	/* allocate memory for buffer */
 	buf = malloc(sizeof(char) * (_strlen(dir) + _strlen(HIST_FILE) + 2));
-	if (!buf)
+	if (!buf) /* return NULL if memory allocation fails */
 		return (NULL);
 	buf[0] = 0;
-	_strcpy(buf, dir);
-	_strcat(buf, "/");
+	_strcpy(buf, dir); /* copy directory string to buffer */
+	_strcat(buf, "/"); /* Concatenate a "/" to the buffer */
 	_strcat(buf, HIST_FILE);
-	return (buf);
+	return (buf); /* return constructed buffer */
 }
 
 /**
@@ -32,24 +35,26 @@ char *get_history_file(info_t *info)
  */
 int write_history(info_t *info)
 {
-	ssize_t fd;
-	char *filename = get_history_file(info);
-	list_t *node = NULL;
+	ssize_t fd; /* file descriptor for history file */
+	char *filename = get_history_file(info);/* full path to the history file */
+	list_t *node = NULL; /* node pointer */
 
+	/* return 1 if getting the history file path fails */
 	if (!filename)
 		return (-1);
 
+	/* open history file */
 	fd = open(filename, O_CREAT | O_TRUNC | O_RDWR, 0644);
-	free(filename);
-	if (fd == -1)
+	free(filename); /* free memory allocated for history file path */
+	if (fd == -1) /* return 1 if opening file fails */
 		return (-1);
 	for (node = info->history; node; node = node->next)
 	{
-		_putsfd(node->str, fd);
-		_putfd('\n', fd);
+		_putsfd(node->str, fd); /* write each history entry to file */
+		_putfd('\n', fd); /* write a new line */
 	}
-	_putfd(BUF_FLUSH, fd);
-	close(fd);
+	_putfd(BUF_FLUSH, fd); /* flush the buffer to the file */
+	close(fd); /* close the file descriptor */
 	return (1);
 }
 
@@ -61,44 +66,52 @@ int write_history(info_t *info)
  */
 int read_history(info_t *info)
 {
+	/* Variables for file handling and reading */
 	int i, last = 0, linecount = 0;
 	ssize_t fd, rdlen, fsize = 0;
 	struct stat st;
 	char *buf = NULL, *filename = get_history_file(info);
 
+	/* return if getting the history file path fails */
 	if (!filename)
 		return (0);
 
+	/* open the history file for reading */
 	fd = open(filename, O_RDONLY);
-	free(filename);
+	free(filename); /* free the allocated memory for the history file path */
 	if (fd == -1)
-		return (0);
-	if (!fstat(fd, &st))
+		return (0); /* return 0 if opening of file fails */
+	if (!fstat(fd, &st)) /* get size of history file */
 		fsize = st.st_size;
-	if (fsize < 2)
+	if (fsize < 2) /* If the file size is less than 2, return 0 */
 		return (0);
+	/* allocate memory for the buffer based on file size */
 	buf = malloc(sizeof(char) * (fsize + 1));
 	if (!buf)
 		return (0);
+	/* read the contents of the file into buffer */
 	rdlen = read(fd, buf, fsize);
 	buf[fsize] = 0;
 	if (rdlen <= 0)
+		/* if reading fails free the buffer and return 0 */
 		return (free(buf), 0);
-	close(fd);
+	close(fd); /* close the fie descriptor */
 	for (i = 0; i < fsize; i++)
 		if (buf[i] == '\n')
 		{
-			buf[i] = 0;
+			buf[i] = 0; /* replace newline with NULL terminator */
 			build_history_list(info, buf + last, linecount++);
 			last = i + 1;
 		}
 	if (last != i)
 		build_history_list(info, buf + last, linecount++);
-	free(buf);
+	free(buf); /* free the buffer memory */
 	info->histcount = linecount;
 	while (info->histcount-- >= HIST_MAX)
 		delete_node_at_index(&(info->history), 0);
+	/* renumber the history entries */
 	renumber_history(info);
+	/* return 1 to indicate success */
 	return (info->histcount);
 }
 
@@ -133,12 +146,14 @@ int build_history_list(info_t *info, char *buf, int linecount)
 {
 	list_t *node = NULL;
 
+	/* if history list is not empty, set the node pointer to the start */
 	if (info->history)
 		node = info->history;
 	add_node_end(&node, buf, linecount);
 
+	/* if history list was empty, update the structure's history pointer */
 	if (!info->history)
 		info->history = node;
-	return (0);
+	return (0); /* return 0 to indicate success */
 }
 
