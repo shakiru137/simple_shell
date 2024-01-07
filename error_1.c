@@ -61,6 +61,7 @@ int print_d(int input, int fd)
 
 	if (fd == STDERR_FILENO)
 		__putchar = _eputchar;
+	/* determine the absolute value of input and handle the sign */
 	if (input < 0)
 	{
 		_abs_ = -input;
@@ -70,6 +71,7 @@ int print_d(int input, int fd)
 	else
 		_abs_ = input;
 	current = _abs_;
+	/* loop through each digit place, printing digits */
 	for (i = 1000000000; i > 1; i /= 10)
 	{
 		if (_abs_ / i)
@@ -79,9 +81,11 @@ int print_d(int input, int fd)
 		}
 		current %= i;
 	}
+	/* print last digit */
 	__putchar('0' + current);
 	count++;
 
+	/* return the total count of characters printed */
 	return (count);
 }
 
@@ -107,18 +111,20 @@ char *convert_number(long int num, int base, int flags)
 		sign = '-';
 
 	}
+	/* Choose the digit array based on flags */
 	array = flags & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
-	ptr = &buffer[49];
-	*ptr = '\0';
+	ptr = &buffer[49]; /* Set the pointer to the end of the buffer */
+	*ptr = '\0'; /* terminate string */
 
 	do	{
-		*--ptr = array[n % base];
-		n /= base;
+		*--ptr = array[n % base]; /* insert digit into the buffer */
+		n /= base; /* move to next digit */
 	} while (n != 0);
 
+	/* if the number was negative,  insert sign character */
 	if (sign)
 		*--ptr = sign;
-	return (ptr);
+	return (ptr); /* return pointer to the resulting string */
 }
 
 /**
@@ -131,9 +137,11 @@ void remove_comments(char *buf)
 {
 	int i;
 
+	/* iterate trough the characters n the string 'buf' */
 	for (i = 0; buf[i] != '\0'; i++)
 		if (buf[i] == '#' && (!i || buf[i - 1] == ' '))
 		{
+			/* replace '#' with null character */
 			buf[i] = '\0';
 			break;
 		}
