@@ -12,6 +12,7 @@ char *_strncpy(char *dest, char *src, int n)
 	int i, j;
 	char *s = dest;
 
+	/* Copy up to 'n-1' characters from 'src' to 'dest' */
 	i = 0;
 	while (src[i] != '\0' && i < n - 1)
 	{
@@ -27,6 +28,7 @@ char *_strncpy(char *dest, char *src, int n)
 			j++;
 		}
 	}
+	/* Return the original starting address of 'dest' */
 	return (s);
 }
 
@@ -42,7 +44,7 @@ char *_strncat(char *dest, char *src, int n)
 	int i, j;
 	char *s = dest;
 
-	i = 0;
+	i = 0; /* find the end of destination string */
 	j = 0;
 	while (dest[i] != '\0')
 		i++;
@@ -54,6 +56,7 @@ char *_strncat(char *dest, char *src, int n)
 	}
 	if (j < n)
 		dest[i] = '\0';
+	/* Return the original starting address of 'dest' */
 	return (s);
 }
 
@@ -66,9 +69,10 @@ char *_strncat(char *dest, char *src, int n)
 char *_strchr(char *s, char c)
 {
 	do {
-		if (*s == c)
+		if (*s == c) /* target character is equal to current character */
 			return (s);
+	/* move to the next character until end of string is reached */
 	} while (*s++ != '\0');
 
-	return (NULL);
+	return (NULL); /* return NULL if the target character isnt found */
 }
