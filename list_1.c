@@ -33,14 +33,17 @@ char **list_to_strings(list_t *head)
 
 	if (!head || !i)
 		return (NULL);
+	/* allocate memory for array of strings */
 	strs = malloc(sizeof(char *) * (i + 1));
 	if (!strs)
 		return (NULL);
 	for (i = 0; node; node = node->next, i++)
 	{
+		/* allocate memory for individual string */
 		str = malloc(_strlen(node->str) + 1);
 		if (!str)
 		{
+			/*  If memory allocation fails, free the previously allocated memory */
 			for (j = 0; j < i; j++)
 				free(strs[j]);
 			free(strs);
@@ -48,10 +51,10 @@ char **list_to_strings(list_t *head)
 		}
 
 		str = _strcpy(str, node->str);
-		strs[i] = str;
+		strs[i] = str; /* assign the pointer to the copied string */
 	}
-	strs[i] = NULL;
-	return (strs);
+	strs[i] = NULL; /* add NULL terminator */
+	return (strs); /* return pointers tto the array of strings */
 }
 
 
@@ -65,17 +68,17 @@ size_t print_list(const list_t *h)
 {
 	size_t i = 0;
 
-	while (h)
+	while (h) /* loop through linked list */
 	{
-		_puts(convert_number(h->num, 10, 0));
+		_puts(convert_number(h->num, 10, 0)); /* print the current node's number */
 		_putchar(':');
 		_putchar(' ');
 		_puts(h->str ? h->str : "(nil)");
-		_puts("\n");
+		_puts("\n"); /* print a new line */
 		h = h->next;
 		i++;
 	}
-	return (i);
+	return (i); /* return total number of nodes in linked list */
 }
 
 /**
@@ -109,12 +112,14 @@ list_t *node_starts_with(list_t *node, char *prefix, char c)
  */
 ssize_t get_node_index(list_t *head, list_t *node)
 {
-	size_t i = 0;
+	size_t i = 0; /* init counter variable */
 
 	while (head)
 	{
+		/* check if current node is the same as the target node */
 		if (head == node)
 			return (i);
+		/* move to the next node in the linked list */
 		head = head->next;
 		i++;
 	}
