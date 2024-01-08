@@ -66,7 +66,6 @@ int write_history(info_t *info)
  */
 int read_history(info_t *info)
 {
-	/* Variables for file handling and reading */
 	int i, last = 0, linecount = 0;
 	ssize_t fd, rdlen, fsize = 0;
 	struct stat st;
@@ -75,9 +74,7 @@ int read_history(info_t *info)
 	/* return if getting the history file path fails */
 	if (!filename)
 		return (0);
-
-	/* open the history file for reading */
-	fd = open(filename, O_RDONLY);
+	fd = open(filename, O_RDONLY);/* open the history file for reading */
 	free(filename); /* free the allocated memory for the history file path */
 	if (fd == -1)
 		return (0); /* return 0 if opening of file fails */
@@ -85,15 +82,13 @@ int read_history(info_t *info)
 		fsize = st.st_size;
 	if (fsize < 2) /* If the file size is less than 2, return 0 */
 		return (0);
-	/* allocate memory for the buffer based on file size */
 	buf = malloc(sizeof(char) * (fsize + 1));
 	if (!buf)
 		return (0);
 	/* read the contents of the file into buffer */
 	rdlen = read(fd, buf, fsize);
 	buf[fsize] = 0;
-	if (rdlen <= 0)
-		/* if reading fails free the buffer and return 0 */
+	if (rdlen <= 0)/* if reading fails free the buffer and return 0 */
 		return (free(buf), 0);
 	close(fd); /* close the fie descriptor */
 	for (i = 0; i < fsize; i++)
@@ -109,10 +104,8 @@ int read_history(info_t *info)
 	info->histcount = linecount;
 	while (info->histcount-- >= HIST_MAX)
 		delete_node_at_index(&(info->history), 0);
-	/* renumber the history entries */
-	renumber_history(info);
-	/* return 1 to indicate success */
-	return (info->histcount);
+	renumber_history(info);/* renumber the history entries */
+	return (info->histcount);/* return 1 to indicate success */
 }
 
 /**

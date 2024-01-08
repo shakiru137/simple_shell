@@ -37,8 +37,8 @@ int _strcmp(char *s1, char *s2)
 	if (*s1 == *s2) /* strings are equal */
 		return (0);
 	else
-		/* Return -1 if s1 is less than s2, 1 if s1 is greater than s2 */
-		return (*s1 < *s2 ? -1 : 1);
+		return (*s1 < *s2 ? -1 : 1); /* Return -1 if s1 */
+	/* is less than s2, 1 if s1 is greater than s2 */
 }
 
 /**
